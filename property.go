@@ -6,6 +6,16 @@ import (
 	"github.com/jomei/notionapi"
 )
 
+// GetProperty は Propertiesから指定のIDのプロパティを返し、見つからなければnilを返します
+func GetProperty(props notionapi.Properties, id notionapi.PropertyID) notionapi.Property {
+	for _, prop := range props {
+		if prop.GetID() == id.String() {
+			return prop
+		}
+	}
+	return nil
+}
+
 func compareProperty(newProp notionapi.Property, oldProp notionapi.Property) bool {
 	switch newProp := newProp.(type) {
 	case *notionapi.TitleProperty:
