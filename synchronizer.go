@@ -86,16 +86,8 @@ func (s *Synchronizer) Synchronize(ctx context.Context, request SynchronizeReque
 		if request.Children != nil {
 			oldDigest := RichTextToString(page.Properties[request.Children.DigestPropertyID].(*notionapi.RichTextProperty).RichText)
 			if oldDigest != request.Children.getDigest() {
-				// 既存のブロックを
-				resp, err := s.client.Block.GetChildren(ctx, notionapi.BlockID(page.ID), nil)
-				if err != nil {
+				if err := ClearBlockChildren(ctx, s.client, notionapi.PageID(page.ID)); err != nil {
 					return nil, err
-				}
-				// 全部消す
-				for _, b := range resp.Results {
-					if _, err := s.client.Block.Delete(ctx, b.GetID()); err != nil {
-						return nil, err
-					}
 				}
 				abcReq := &notionapi.AppendBlockChildrenRequest{Children: request.Children.Blocks}
 				if _, err := s.client.Block.AppendChildren(ctx, notionapi.BlockID(page.ID), abcReq); err != nil {
