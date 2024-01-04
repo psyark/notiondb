@@ -16,6 +16,17 @@ func GetProperty(props notionapi.Properties, id notionapi.PropertyID) notionapi.
 	return nil
 }
 
+// getPropertyFromPage は、nameOrIDで指定された文字列がプロパティ名もしくはプロパティIDであると仮定して
+// 既存のページからプロパティを取得します
+// これは、ユーザーが指定したSynchronizeRequest.Propertiesのキーに対し、対応するプロパティを取得する際に使われます
+// IDでの探索が名前の探索よりも優先されます
+func getPropertyFromPage(page *notionapi.Page, nameOrID string) notionapi.Property {
+	if prop := GetProperty(page.Properties, notionapi.PropertyID(nameOrID)); prop != nil {
+		return prop
+	}
+	return page.Properties[nameOrID]
+}
+
 func compareProperty(newProp notionapi.Property, oldProp notionapi.Property) bool {
 	switch newProp := newProp.(type) {
 	case *notionapi.TitleProperty:

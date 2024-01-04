@@ -68,7 +68,7 @@ func (s *Synchronizer) Synchronize(ctx context.Context, request SynchronizeReque
 
 		// プロパティの比較
 		for k, newProp := range request.Properties {
-			if oldProp, ok := page.Properties[k]; !ok || !compareProperty(newProp, oldProp) {
+			if oldProp := getPropertyFromPage(page, k); oldProp == nil || !compareProperty(newProp, oldProp) {
 				req.Properties[k] = newProp
 			}
 		}
